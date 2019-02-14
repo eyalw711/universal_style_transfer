@@ -6,3 +6,5 @@ Report/titling.ins
 *.pdf
 *.aux
 *.gz
+*.ini
+*.pyc
