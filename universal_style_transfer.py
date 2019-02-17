@@ -59,8 +59,13 @@ def style_transfer(args):
     encoders = [R_Encoder(n).to(device) for n in ser]
     decoders = [R_Decoder(n).to(device) for n in ser]
   else:
-    encoders = [myEncoder(n).to(device) for n in ser]
-    decoders = [myDecoder(n, init_weight=False).to(device) for n in ser]
+    encoders = [Encoder(n).to(device) for n in ser]
+    decoders = [Decoder(n, init_weight=False).to(device) for n in ser]
+  
+    #TODO
+    if args.full_nets:
+      for i,model in enumerate(decoders):
+        model.load_state_dict(torch.load('models/ust_decoder_{}.pth'.format(ser[i])))
     
   for model in encoders+decoders:
     model.eval()
@@ -130,6 +135,7 @@ def main():
   
   parser.add_argument('--ref-models', default=False, action='store_true', help='use reference models')
   parser.add_argument('--arch', help='custom architecture')
+  parser.add_argument('--full-nets', default=False, action='store_true', help='load full nets instead of building blocks')
   args = parser.parse_args()
   
   ########################
@@ -172,6 +178,10 @@ def main():
     args.arch = [int(c) for c in args.arch]
     assert all(0<j<6 for j in args.arch), "arch must be a string of digits from 1 to 5"
   
+  ##TODO:
+  if args.ref_models:
+    assert not args.full_nets, "full nets option for my models only"
+    
   ########################
   #     Run Program      #
   ########################
