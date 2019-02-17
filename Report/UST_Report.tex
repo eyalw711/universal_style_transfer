@@ -36,7 +36,8 @@
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{observation}[theorem]{Observation}
 \newtheorem*{remark}{Remark}
-
+\usepackage{graphicx}
+\usepackage{subcaption}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 
@@ -98,7 +99,7 @@
 	\pagenumbering{arabic}
 	
 	\pagebreak
-	\section{Abstract}
+	%\section{Abstract}
 	\label{abs_lbl}
 	\input{abstract}
 	
@@ -122,4 +123,7 @@
 	\label{conclusions_lbl}
 	\input{conclusions}
 		
+	\section{References}
+	\label{references_lbl}
+	\input{references}
 \end{document}
