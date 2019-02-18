@@ -1,0 +1,10 @@
+In their paper \cite{bib11}, Li et al describe an interpolation technique to generate texture from two input style images. Their method, which we shall call Original-Merge, at each pipeline level conducts two WCT calls, one for the content features with style features $f_{s_1}$ to get $f_{cs_1}$ and the other for the same content features along with the second style features $f_{s_2}$ to get $f_{cs_2}$. Then the results are interpolated with $f_{cs} = \beta f_{cs_1} + (1-\beta)f_{cs_2}$. After the interpolation, $f_{cs}$ is reconstructed as usual using the decoder of the level.\\
+
+In this section we researched other merging techniques to merge two style with \textbf{one} WCT call each pipeline level. We present the following three techniques:
+\begin{itemize}
+	\item \textbf{Level-Shuffle Merge}: ...
+	\item \textbf{Channel-Shuffle Merge}: ...
+	\item \textbf{Interpolated-Style Merge}: ...
+	
+\end{itemize}
+show an improved algorithm which merges two style images bu using WCT algorithm which based on singular value decomposition (SVD). Here, we both implement the original merge algorithm as proposed in \cite{bib11} as well as introduce three additional efficient methods based on the use WCT.
