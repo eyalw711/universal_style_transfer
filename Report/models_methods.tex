@@ -35,9 +35,9 @@ Decoder training was done with two steps: Decoder-Block sequential training, fol
 	\begin{gather*}
 	\hat{x} = B_1 \circ \dots \circ B_{j-1} \circ B_j \circ E_j (x)
 	\end{gather*}
-	In this calculation all functions except $B_j$ are fixed. Since $B_{j-1}, \dots, B_1$ are already pretrained to some degree when training $B_j$, then $B_j$ learns to transform $E_j$'s output to $D_{j-1}$ input.
+	In this calculation all functions except $B_j$ are fixed. Since $B_{j-1}, \dots, B_1$ are already pretrained to some degree when training $B_j$, then $B_j$ learns to transform $E_j$'s output to $D_{j-1}$ input. The sequential blocks training is implemented in the \texttt{train\_block} function in \texttt{seq\_models.py} file. Use '\texttt{python seq\_models.py -h}' for help.
 	
-	\item \textbf{Fine-Tune Phase}: Each decoder $D_j$ is built according to Equation~\ref*{eq:decoder} with the pretrained blocks acquired in the previous step. With none of the blocks frozen, the entire $D_j$ is now trained for image reconstruction against $E_j$ and ultimately is saved as a decoder (and not as a bundle of blocks).
+	\item \textbf{Fine-Tune Phase}: Each decoder $D_j$ is built according to Equation~\ref*{eq:decoder} with the pretrained blocks acquired in the previous step. With none of the blocks frozen, the entire $D_j$ is now trained for image reconstruction against $E_j$ and ultimately is saved as a decoder (and not as a bundle of blocks). The fine-tune training is implemented in the \texttt{train\_decoder} function in \texttt{models\_utils.py} file. Use '\texttt{python models\_utils.py -h}' for help.
 \end{itemize}
 
 Throughout this section, the loss function for training the models is:
@@ -53,11 +53,3 @@ $\lambda$ was set to $1.0$ during training as advised by Li et al in their paper
 \textcolor{red}{TODO}: discuss why we chose to train the models sequentially - smaller models converge faster, we wanted to use this to obtain a "good" starting point for the fine tuning.
 
 \textcolor{red}{TODO}: COCO Dataset
-
-\begin{figure}[h!]
-	\centering
-	\includegraphics[width=0.5\linewidth]{UST_arc_mlt_level_pipeline.png}
-	\caption{Universal Style Transfer architecture with the whole multi level pipeline. Each level of stylization consists of single encoder-WCT-decoder network with different decreasing number of VGG layers. C and S are content and style images, respectively.
-	}
-	\label{fig:full-pipeline}
-\end{figure}

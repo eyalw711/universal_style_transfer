@@ -11,17 +11,17 @@ At encoder-decoder architecture $j\in\{1,2,3\}$, let $x$ be the input content, $
 	
 	\item Lastly, these regions are being blended with $f_{cs}$. Let $R_i$ be the indices slicing region $i$ from $f_c$, i.e. $f_c[R_i]$ is the $i$-th region, then:
 	\begin{equation}
-	f_{cs}[R_i] = (1-k)*f_{cs}[R_i] + k*r_i
+	f_{cs}[R_i] = (1-k)\cdot f_{cs}[R_i] + k\cdot r_i
 	\end{equation}
 	$k$ is a kernel the size of the regions $r_i$ that blends the edges in a way $f_{cs}[R_i]$ makes more effect close to the rectangular region borders while $r_i$ makes more effect in the interior. We a 2D raised cosine for this end. 
 \end{itemize}
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.5\linewidth]{boost_fig.png}
-	\caption{Boost main steps. (0) is the ordinary WCT, (a) is regions selection, (b) is region slicing, in (c) the regions are stacked, in (d) WCT is performed on the stacked regions, finally in (e) the boosted regions are blended into $f_{cs}$.}
+	\includegraphics[width=0.75\linewidth]{boost_fig.png}
+	\caption{Boost main steps. (0) is the ordinary WCT on $f_c$ and $f_s$, (a) is regions selection, (b) is region slicing, in (c) the regions are stacked, in (d) WCT is performed on the stacked regions with 512 channels, finally in (e) the boosted regions are blended into $f_{cs}$.}
 	\label{fig:boost}
 \end{figure}
 
-Before refining the boost method to its final form we had tried to replace the original WCT altogether in architectures 1,2 and 3, such that \textbf{only} efficient SVD calls are conducted. Doing so, regions were not chosen, instead, the features were perfectly divided into non overlapping sections. These were stacked, then came WCT and after which the sections were unstacked. The major drawback of that method is that these sections are treated as independent channels in the WCT, so clear border artifacts could be seen between them after the unstack and reconstruction operations.
+Before refining the boost method to its final form we had tried to replace the original WCT altogether in architectures 1,2 and 3, such that \textbf{only} efficient SVD calls are conducted. Doing so, regions were not chosen, instead, the features were perfectly divided into non overlapping sections. These were stacked, then came WCT and after which the sections were unstacked. The major drawback of that method is that these sections are treated as independent channels in the WCT, so clear border artifacts could be seen between them after the unstack and reconstruction operations. The boost step is implemented in \texttt{boost} function in \texttt{utils.py}.
 
