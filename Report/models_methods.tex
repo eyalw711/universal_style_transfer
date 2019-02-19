@@ -41,7 +41,7 @@ Decoder training was done with two steps: Decoder-Block sequential training, fol
 \end{itemize}
 
 Throughout this section, the loss function for training the models is:
-\begin{equation}
+\begin{equation}\label{eq:loss}
 L = MSE(I_o-I_i) + \lambda \cdot MSE(\Phi(I_o)-\Phi(I_i))
 \end{equation}
 It is derived from Equation 1 at \cite{bib11}, with the difference that we use $MSE$ where Li et al use $L2 -loss$. We chose to use $MSE$ since different encoders $\Phi$ output different dimensions, causing the $L2$ loss to be  somewhat not as normalized as the $MSE$. For example, an input image $I_i$ of dimensions [3,1024,1024] would have features $f_4=E_4(I_i)$ of dimension [512, 128, 128] for $D_4$ training, 8,388,608 total entries, whereas it would have $f_5=E_5(I_i)$ of dimension [512, 64, 64] for $D_5$ training, 2,097,152 total entries. In this example, the dimension difference causes the feature loss to be much more important in $D_4$ training than in $D_5$ under $L2$, while we believe it shouldn't.

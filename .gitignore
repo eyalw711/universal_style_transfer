@@ -8,3 +8,8 @@ Report/titling.ins
 *.gz
 *.ini
 *.pyc
+*.aux
+*.log
+*.out
+*.pdf
+*.gz
