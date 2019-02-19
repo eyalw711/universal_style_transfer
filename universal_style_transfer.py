@@ -44,7 +44,7 @@ def style_transfer(args):
   
   if args.single_level:
     ser = [4] #[5]
-  elif merge and args.merge_method is "layer-shuffle":
+  elif merge == 2: #channel-merge
     ser = [5,4,3,2] # layer 1 ruins the result in default architecture
   else:
     ser = [2,3,4] #[5,4,3,2,1] # architecture pipeline
@@ -60,12 +60,7 @@ def style_transfer(args):
     decoders = [R_Decoder(n).to(device) for n in ser]
   else:
     encoders = [Encoder(n).to(device) for n in ser]
-    decoders = [Decoder(n, init_weight=False).to(device) for n in ser]
-  
-    #TODO
-    if args.full_nets:
-      for i,model in enumerate(decoders):
-        model.load_state_dict(torch.load('models/ust_decoder_{}.pth'.format(ser[i])))
+    decoders = [Decoder(n, weight_init_method='full_net').to(device) for n in ser]
     
   for model in encoders+decoders:
     model.eval()
@@ -128,14 +123,14 @@ def main():
   parser.add_argument('--out-dir', default='results', help='directory outputs are saved in')
   parser.add_argument('--filename', default=None, help='output filename')
   
-  parser.add_argument('--merge-method', type=int, default=4, help='method of merging two styles. select 1 for "original", 2 for "layer-shuffle", 3 for "pipeline-shuffle" and 4 for "feature-average"', choices=[1,2,3,4])
+  parser.add_argument('--merge-method', type=int, default=4, help='method of merging two styles. select 1 for "original", 2 for "channel-merge", 3 for "level-merge" and 4 for "feature-average"', choices=[1,2,3,4])
 
   parser.add_argument('--alpha', type=float, default=0.5, choices=[Range(0.0, 1.0)], help='original content features and transformed features interpolation parameter')
   parser.add_argument('--beta', type=float, default=0.5, choices=[Range(0.0, 1.0)], help='weighing the style images in the style-img-pair parameter')
   
   parser.add_argument('--ref-models', default=False, action='store_true', help='use reference models')
   parser.add_argument('--arch', help='custom architecture')
-  parser.add_argument('--full-nets', default=False, action='store_true', help='load full nets instead of building blocks')
+  #parser.add_argument('--full-nets', default=False, action='store_true', help='load full nets instead of building blocks')
   args = parser.parse_args()
   
   ########################
@@ -178,9 +173,7 @@ def main():
     args.arch = [int(c) for c in args.arch]
     assert all(0<j<6 for j in args.arch), "arch must be a string of digits from 1 to 5"
   
-  ##TODO:
-  if args.ref_models:
-    assert not args.full_nets, "full nets option for my models only"
+
     
   ########################
   #     Run Program      #
@@ -191,7 +184,7 @@ def main():
     result = result.unsqueeze(0)
     
   save_image(result.data, img_file_path, nrow=1, normalize=False)
-  print("Style Transfer Complete")
+  print("Style Transfer Complete. result saved to {}".format(img_file_path))
   
   
 if __name__ == "__main__":

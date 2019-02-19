@@ -18,10 +18,10 @@ def merge_function(merge, style_imgs, beta, encoders, level, device):
   """gets style imgs with batch dimension, returns features with NO batch dimension"""
   enc = encoders[level]
   
-  if merge == 1: # original twice coloring-svd
+  if merge == 1: # original-merge twice coloring-svd
     raise NotImplementedError
 
-  elif merge == 2: # shuffle channels - only 1 coloring-svd
+  elif merge == 2: # channel-merge: shuffle channels only 1 coloring-svd
     d = 4
     sfs = [enc(style_img).data.to(device).squeeze(0) for style_img in style_imgs]
     chns = sfs[0].size(0)
@@ -30,10 +30,10 @@ def merge_function(merge, style_imgs, beta, encoders, level, device):
     sf2 = torch.split(sfs[1], chns//d, dim=0)
     sf = torch.cat([sf1[i] if i%2==0 else sf2[i] for i in range(d)], 0)
     
-  elif merge == 3: # each level use different sf - only 1 coloring-svd
+  elif merge == 3: # level-merge: each level use different sf - only 1 coloring-svd
     sf = encoders[level](style_imgs[level%2]).data.to(device).squeeze(0)
       
-  elif merge == 4: # weighted average sf before wct
+  elif merge == 4: # Interpolated-Style Merge: weighted average sf before wct
     # Difference is that
     # original plan is to: whiten cf, color with sf1 (svd), color with sf2 (svd), merge
     # new plan is to:      whiten cf, color with beta*sf1+(1-beta)*sf2 (only 1 coloring-svd)
