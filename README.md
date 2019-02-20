@@ -10,6 +10,7 @@ Eyal Waserman & Carmi Shimon
 Content                    |  Style                   | Result
 :-------------------------:|:------------------------:|:------------:
 ![alt text](https://github.com/eyalw711/universal_style_transfer/blob/master/Report/Figures/nyc_sq.jpg "nyc")  |  ![alt text](https://github.com/eyalw711/universal_style_transfer/blob/master/Report/Figures/graffiti_sq.jpg "graffiti")  |  ![alt text](https://github.com/eyalw711/universal_style_transfer/blob/master/Report/Figures/transfer_examples/transfer_nyc_graffiti_08_ref.jpg "result")  
+![alt text](https://github.com/eyalw711/universal_style_transfer/blob/master/Report/Figures/room_sq.jpg "room")  |  ![alt text](https://github.com/eyalw711/universal_style_transfer/blob/master/Report/Figures/st2_sq.jpg "paint")  |  ![alt text](https://github.com/eyalw711/universal_style_transfer/blob/master/Report/Figures/transfer_examples/transfer_room_paint_08_ref.jpg "result")  
 
 ### Boost
 Content                    |  Style                   | No Boost    | Boost
