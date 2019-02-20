@@ -97,7 +97,7 @@ def style_transfer(args):
     csf = wct(args.alpha, cf, sf)
     
     if merge == 1: #original merge takes special care
-      sf2 = merge_function(merge, reversed(style_imgs), args.beta, encoders, level, device)
+      sf2 = merge_function(merge, style_imgs[::-1], args.beta, encoders, level, device)
       csf2 = wct(args.alpha, cf, sf2)
       csf = args.beta*csf + (1-args.beta)*csf2
     
