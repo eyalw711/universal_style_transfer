@@ -1,10 +1,10 @@
 %%%%%  Decoder %%%%%
 \subsection{Reconstruction Quality Evaluation}
 
-Our implementation of the Universal Style Transfer is adapted to use two different sets of encoder-decoder models: the models we trained according to section \ref{subsec:Models} (our), and the models offered to download by Li et al in their GitHub (reference). This means we can test \textbf{our implementation} of the UST algorithm with both sets of models. In this section we want to evaluate our models in comparison to the references in terms of image reconstruction, in order to asses the quality of our models training.
+Our implementation of the Universal Style Transfer is adapted to use two different sets of encoder-decoder models: the models we trained according to section \ref{subsec:Models} (our), and the models offered to download by Li et al in their GitHub (reference). This means that we can test \textbf{our implementation} of the UST algorithm with both sets of models. In this section we want to evaluate our models in comparison to the references in terms of image reconstruction, in order to asses the quality of our models training.
 
 \subsubsection{Quantative Reconstruction Loss}
-As section \ref{subsec:Models} explains, the models are trained for image reconstruction. Passing an input image through the encoder-decoder models will output a reconstructed image, featuring some distortion. A better trained model will output images which feature smaller distortion. In order to quantify the reconstruction distortion induced by our trained models, in comparison to that of the reference models, we encode and then decode 1k content images from the COCO dataset with each of the 5 encoder-decoder pairs, and measure the pixel MSE and feature MSE. The pixel MSE measures the mean square error between the reconstructed image, $\hat{x}$, and the original one, $x$, i.e. $MSE(x - \hat{x})$. The feature MSE measures the error between the deep features of the reconstructed image and the original one. It is measured by again encoding $x$ and $\hat{x}$ and calculating $MSE(E(x)-E(\hat{x}))$. Table ~\ref{Tab:loss} displays the pixel loss (feature loss) per model, which are defined to be the average pixel MSE (feature MSE) over the 1k images.
+As section \ref{subsec:Models} explains, the models are trained for image reconstruction. Passing an input image through the encoder-decoder models will output a reconstructed image, featuring some distortion. A better trained model will output images which feature smaller distortion. In order to quantify the reconstruction distortion induced by our trained models, in comparison to that of the reference models, we encode and then decode 1k content images from the COCO dataset with each of the 5 encoder-decoder pairs, and measure the pixel MSE and feature MSE. The pixel MSE measures the pixel mean square error between the reconstructed image, $\hat{x}$, and the original one, $x$, i.e. $MSE(x - \hat{x})$. The feature MSE measures the error between the deep features of the reconstructed image and the original one. It is measured by encoding $x$ and $\hat{x}$ and calculating $MSE(E(x)-E(\hat{x}))$. Table ~\ref{Tab:loss} displays the pixel loss (feature loss) per model, which is defined to be the average pixel MSE (feature MSE) over all 1k images.
 
 % ecoder-decoder table %
 
@@ -30,11 +30,15 @@ As section \ref{subsec:Models} explains, the models are trained for image recons
 	\end{tabular}\\
 \end{center}
 
-\subsubsection{Qualitative Reconstruction Loss}
-To demonstrate the image reconstruction performance of our trained models, we choose 5 different images and feed them as input to our encoder-decoder architectures, as well as to the reference architectures. The results, as presented in figure ~\ref{fig:reconstruction}, visualize the image reconstruction quality of our models in comparison to that of the references.\newline
-In figure ~\ref{fig:reconstruction} (a) we present Our reconstruction which means the use of trained decoders as in VGG-19 \cite{bib20} and encoder, based on torchvision package.
-As can be visually seen, our reconstruction images are less good than Li et al. \cite{bib11} results. Our results suffer from artifacts such as blurring and over smoothing, especially in small details such as faces. This artifacts are outcome of our trained decoder.
+\textcolor{red}{TODO: complete when 5th row is complete...} From table ~\ref{Tab:loss} it is visible that in terms of pixel loss, the reconstruction done by the reference models is at least two orders of magnitude better than of our models. It is also visible that the  pixel loss generally increases as the architecture gets deeper. In addition, we measure quantitatively (see table ~\ref{Tab:loss}) our reconstruction distortion loss by two measures: pixel loss and feature loss as depicted in equation \ref{eq:loss} and elaborated in \cite{bib22, bib17}.\newline\\
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% reconstruction comparison %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Qualitative Reconstruction Loss}
+To demonstrate the image reconstruction performance of our trained models, we choose 5 different images and feed them as input to both our encoder-decoder architectures, and the references. The results, as presented in figure ~\ref{fig:reconstruction}, visualize the image reconstruction quality of our models in comparison to that of the references. Column (a) consists of the original images, (b) presents the reconstruction results for encoder-decoder architecture \#1, columns (c)-(f) present the same for architectures 2-5 as depicted in \ref{subsec:Models}, and column (g) presents the reconstruction result done by the reference encoder-decoder architecture \#5. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Reconstrucion images %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	% first line
 	\centering
@@ -158,34 +162,25 @@ As can be visually seen, our reconstruction images are less good than Li et al. 
 		\includegraphics[width=\linewidth]{reconst_exper/dec_room_ref_5_test.jpg} % their reconstruction arc5 num.1
 		\caption{Ref arc5}	
 	\end{subfigure}
-	\caption{Reconstructed images}
+	\caption{Image Reconstruction in different architectures}
 	\label{fig:reconstruction}
 \end{figure}
-Figure ~\ref{fig:reconstruction} shows reconstruction of original images (figure ~\ref{fig:reconstruction} (a)) using different architectures of encoder-decoder, i.e. figure ~\ref{fig:reconstruction} (b) uses architecture 1 which uses Encoder-1 and Decoder-Block-1, figure ~\ref{fig:reconstruction} (c) uses architecture 3 which uses Encoder-3 and Decoder-Block-3, etc. as depicted in \ref{subsec:Models}.
 
-\subsubsection{TODO}
-Our distortion-of-reconstruction loss table ~\ref{Tab:loss} shows by both pixel and feature loss, that the first architecture has the less loss since it is only uses 1 convolution layer. As we go deeper in architectures in a manner of convolutional layers, we see that the loss arises respectively. Hence we decided to balance the distortion in out continuous work, therefore we chose to work with a pipeline that has architecture 4, forsake architecture 5 to avoid major distortion such as smoothing and blurring artifacts.
+\textcolor{red}{TODO: address the results from the numeric table} Our distortion-of-reconstruction loss table ~\ref{Tab:loss} shows by both pixel and feature loss, that the first architecture has the less loss since it is only uses 1 convolution layer. As we go deeper in architectures in a manner of convolutional layers, we see that the loss arises respectively.\\
 
-As part of implementing UST \cite{bib11}, we separately train five reconstruction decoders for features
-at the VGG-19 \verb|Relu_X_1| (X=1,2,...,5) layers. It is trained on the Microsoft COCO dataset \cite{bib10} and
-the weight $\lambda$ to balance the two losses in (2) is set as 1.
-The pixel reconstruction loss \cite{bib22} and feature loss \cite{bib22, bib17} are employed for reconstructing an input image, see equation ~\ref{eq:loss}
-After training, the decoder is fixed (i.e., will not be fine-tuned) and used as a feature inverter.\newline
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% recunstruction comparison %%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Section \ref{subsec:Decoders} explains why we needed to train 5 different decoders. Without time and compute power limitations we could get much more powerful decoders which are not producing such as artifacts.
-In addition, we measure quantitatively (see table ~\ref{Tab:loss}) our reconstruction distortion loss by two measures: pixel loss and feature loss as depicted in equation \ref{eq:loss} and elaborated in \cite{bib22, bib17}.\newline\\
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Reconstrucion images %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+From Figure ~\ref{fig:reconstruction} it can be seen that our architectures \#1-4 conserve the original image's color to some degree. Architecture \#5, unlike them, only preserves a fraction of the color tones originally available in the input - mostly some of the reds. Additionally, the deeper the architecture is, the more details are lost in the reconstruction process. Another problem is image regions going gray, and losing their contrast, such as the shade of the car in the fourth row or the blue walls in the fifth. Keeping in mind the trade-off between pipeline depth and image distortion, in order to get the best results possible from the models trained by us, we choose to shorten our pipeline such that it would consist of the four last pipeline levels from ~\ref{fig:style_transfer}. In this way we expect our pipeline to produce good reconstruction quality as well as use deep enough features while transferring style. This means we leave architecture \#5 unused when transferring style using our trained models.\\
+These visual results show that our models are not sufficiently trained. The main difficulty in training these models was a lack of compute power. The models, based on VGG-19 are relatively large and converge very slowly towards optimality. We strongly believe that given more powerful resources we could have trained better performing decoders.\\
+\textcolor{red}{Consider making an experiment showing reconstruction through the pipeline 4321, next to style transfer or just next to the reference (justification for choosing 4321 as our pipeline)}
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % style transfer images %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Style Transfer Experimental Results}
+This section display the results of our implementation of UST\cite{bib11}. Unlike the previous section where the images only when through reconstruction, this time we run the entire algorithm implementation on them, including the WCT at the bottleneck of the model-decoder pipeline levels. Due to reasons explained above, when using our trained models the pipeline consists of architectures \#1-4, while it consists of architectures \#1-5 when our implementation uses the reference models. In figure ~\ref{fig:style_transfer} we show several examples of style transferral using our implementation with both sets of models. Column (a) shows the input content images, column (b) shows the input style images, column (c) shows the results computed using the reference models and (d) using ours.\\
+
 \begin{figure}[H]
 	% first line
 	\centering
@@ -264,6 +259,9 @@ In addition, we measure quantitatively (see table ~\ref{Tab:loss}) our reconstru
 	\caption{Results from different style transfer methods using style weight $\alpha=0.5$}
 	\label{fig:style_transfer}
 \end{figure}
+
+It is seen in the results displayed in Figure ~\ref{fig:style_transfer} (c)+(d) that our implementation of the UST algorithm works and that given a pair of content and style images it outputs a new image that resembles the former in its content and the latter in its artistic style. As earlier mentioned the results produced by our models suffer from artifacts of gray areas originating in the reconstruction distortion. Generally column (d) shows results less pleasing than those in column (c) but clearly answers the definition of Style Transfer. \\
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Boost %

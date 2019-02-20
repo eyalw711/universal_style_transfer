@@ -54,3 +54,5 @@ $\lambda$ was set to $1.0$ during training as advised by Li et al in their paper
 \textcolor{red}{TODO}: discuss why we chose to train the models sequentially - smaller models converge faster, we wanted to use this to obtain a "good" starting point for the fine tuning.
 
 \textcolor{red}{TODO}: COCO Dataset
+
+\textcolor{red}{TODO} As part of implementing UST \cite{bib11}, we separately train five reconstruction decoders for features at the VGG-19 \verb|Relu\_X\_1| (X=1,2,...,5) layers. It is trained on the Microsoft COCO dataset \cite{bib10} and the weight $\lambda$ to balance the two losses in (2) is set as 1. The pixel reconstruction loss \cite{bib22} and feature loss \cite{bib22, bib17} are employed for reconstructing an input image, see equation ~\ref{eq:loss} After training, the decoder is fixed (i.e., will not be fine-tuned) and used as a feature inverter.

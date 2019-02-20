@@ -126,7 +126,7 @@ def main():
   parser.add_argument('--out-dir', default='results', help='directory outputs are saved in')
   parser.add_argument('--filename', default=None, help='output filename')
   
-  parser.add_argument('--merge-method', type=int, default=4, help='method of merging two styles. select 1 for "original", 2 for "channel-merge", 3 for "level-merge" and 4 for "feature-average"', choices=[1,2,3,4])
+  parser.add_argument('--merge-method', type=int, default=4, help='method of merging two styles. select 1 for "original", 2 for "channel-merge", 3 for "level-merge" and 4 for "interpolate-style-merge"', choices=[1,2,3,4])
 
   parser.add_argument('--alpha', type=float, default=0.5, choices=[Range(0.0, 1.0)], help='original content features and transformed features interpolation parameter')
   parser.add_argument('--beta', type=float, default=0.5, choices=[Range(0.0, 1.0)], help='weighing the style images in the style-img-pair parameter')
