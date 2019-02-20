@@ -47,7 +47,7 @@ def style_transfer(args):
   elif merge == 2: #channel-merge
     ser = [5,4,3,2] # layer 1 ruins the result in default architecture
   else:
-    ser = [2,3,4] #[5,4,3,2,1] # architecture pipeline
+    ser = [5,4,3,2,1] # architecture pipeline
   
   if args.arch:
     ser = args.arch
@@ -86,10 +86,8 @@ def style_transfer(args):
   for level in range(len(ser)):
     print('pipeline level {}'.format(level+1))
     chns = chnls_per_model[ser[level]-1]
-    kargs = {}
     
     #encoder,decoder expect batch dimension, wct doesn't
-    
     cf = encoders[level](content_img).data.to(device).squeeze(0)
     if not merge:
       sf = encoders[level](style_imgs[0]).data.to(device).squeeze(0)
@@ -97,6 +95,11 @@ def style_transfer(args):
       sf = merge_function(merge, style_imgs, args.beta, encoders, level, device) # merge returns squeezed
     
     csf = wct(args.alpha, cf, sf)
+    
+    if merge == 1: #original merge takes special care
+      sf2 = merge_function(merge, style_imgs[::-1], args.beta, encoders, level, device)
+      csf2 = wct(args.alpha, cf, sf2)
+      csf = args.beta*csf + (1-args.beta)*csf2
     
     if args.boost:
       level_rois = [divs_by_model[i-1] for i in ser]
@@ -130,7 +133,6 @@ def main():
   
   parser.add_argument('--ref-models', default=False, action='store_true', help='use reference models')
   parser.add_argument('--arch', help='custom architecture')
-  #parser.add_argument('--full-nets', default=False, action='store_true', help='load full nets instead of building blocks')
   args = parser.parse_args()
   
   ########################
