@@ -4,7 +4,7 @@ We based our solution on the implementation of VGG-19 \cite{bib20} in \texttt{to
 [64, 64, MP, 128, 128, MP, 256, 256, 256, 256, MP, 512, 512, 512, 512, MP, 512, 512, 512, 512, MP]
 \end{gather*}
 
-\subsubsection{Encoders}
+\subsubsection{Encoders}\label{subsec:Encoders}
 Any numeric $d$ entry indicates a 2D-convolution layer with $d$ output channels, and MP entries indicate MaxPool layers. In order to build the five encoders, we load the \texttt{torchvision.models} VGG-19 pretrained model and trim it in the following way:
 \begin{itemize}
 	\item Encoder-1: [64]
@@ -15,7 +15,7 @@ Any numeric $d$ entry indicates a 2D-convolution layer with $d$ output channels,
 \end{itemize}
 The encoders are initialized with pretrained weights and thus the project does not include encoder training. For next sections, denote Encoder-$j$ as $E_j$.
 
-\subsubsection{Decoders}
+\subsubsection{Decoders}\label{subsec:Decoders}
 The architecture of the decoders is generally inverse to that of the encoders, in order to achieve image-reconstruction. We defined five decoder \textit{blocks} the following way:
 \begin{itemize}
 	\item Decoder-Block-1: (64)[3]
