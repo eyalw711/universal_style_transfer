@@ -73,7 +73,7 @@ def models_loss_experiment():
 
       print('Batchs done: {}'.format(num_batches))
         
-      if num_batches == 100:
+      if num_batches == 1000:
         break
   
     loss = [z/num_batches for z in loss]

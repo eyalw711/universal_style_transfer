@@ -19,7 +19,8 @@ def merge_function(merge, style_imgs, beta, encoders, level, device):
   enc = encoders[level]
   
   if merge == 1: # original-merge twice coloring-svd
-    raise NotImplementedError
+    # Hack: simply returns style features of first style
+    return enc(style_imgs[0]).data.to(device).squeeze(0)
 
   elif merge == 2: # channel-merge: shuffle channels only 1 coloring-svd
     d = 4
@@ -38,7 +39,6 @@ def merge_function(merge, style_imgs, beta, encoders, level, device):
     # original plan is to: whiten cf, color with sf1 (svd), color with sf2 (svd), merge
     # new plan is to:      whiten cf, color with beta*sf1+(1-beta)*sf2 (only 1 coloring-svd)
     sfs = [enc(style_img).data.to(device).squeeze(0) for style_img in style_imgs]
-    print(sfs[0].size(), sfs[1].size())
     sf = beta*sfs[0] + (1-beta)*sfs[1]
   
   else:
@@ -89,7 +89,6 @@ def boost(csf, cf, sf, level_roi, device):
   
   hr, wr = h//level_roi[0], w//level_roi[1]
   roidefs = gen_roi_defs(h, w, numrois, hr, wr)
-  print(roidefs)
   
   croi = torch.cat([cf[:, roidef.tl.h:roidef.br.h, roidef.tl.w:roidef.br.w] for roidef in roidefs], 0)
   sroi = torch.cat([sf[:, roidef.tl.h:roidef.br.h, roidef.tl.w:roidef.br.w] for roidef in roidefs], 0)
