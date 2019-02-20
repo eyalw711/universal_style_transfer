@@ -3,9 +3,10 @@ We based our solution on the implementation of VGG-19 \cite{bib20} in \texttt{to
 \begin{gather*}
 [64, 64, MP, 128, 128, MP, 256, 256, 256, 256, MP, 512, 512, 512, 512, MP, 512, 512, 512, 512, MP]
 \end{gather*}
+Any numeric $d$ entry indicates a 2D-convolution layer with $d$ output channels, and MP entries indicate MaxPool layers.
 
 \subsubsection{Encoders}
-Any numeric $d$ entry indicates a 2D-convolution layer with $d$ output channels, and MP entries indicate MaxPool layers. In order to build the five encoders, we load the \texttt{torchvision.models} VGG-19 pretrained model and trim it in the following way:
+ In order to build the five encoders, we load the \texttt{torchvision.models} VGG-19 pretrained model and trim it in the following way:
 \begin{itemize}
 	\item Encoder-1: [64]
 	\item Encoder-2: [64, 64, MP, 128]
