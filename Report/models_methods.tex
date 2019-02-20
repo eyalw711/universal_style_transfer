@@ -1,12 +1,12 @@
 \hspace{0.5cm} In their paper \cite{bib11}, Li et al describe that in order to perform UST, the models required are five pairs of encoder-decoders based on the VGG-19 architecture. They work as a pipeline where each encoder-decoder pair is a pipeline level (see Fig.~\ref{fig:full-pipeline}). In each such pair, the encoder serve as feature extractor while the decoder does the inverse operation, reconstructs the image from the extracted features.\\
-We based our solution on the implementation of VGG-19 \cite{bib20} in \texttt{torchvision.models}. It is trained for image classification on the ImageNet dataset (Deng et al.) \cite{bib21}. The model is available with pretrained weights. Its CNN feature extractor has the following architecture: 
+We based our solution on the implementation of VGG-19 \cite{bib20} in \texttt{torchvision.models}. It is trained for image classification on the ImageNet dataset (Deng et al.) \cite{bib21}. The model is available with pretrained weights. Its CNN feature extractor has the following architecture:
 \begin{gather*}
 [64, 64, MP, 128, 128, MP, 256, 256, 256, 256, MP, 512, 512, 512, 512, MP, 512, 512, 512, 512, MP]
 \end{gather*}
 Any numeric $d$ entry indicates a 2D-convolution layer with $d$ output channels, and MP entries indicate MaxPool layers.
 
-\subsubsection{Encoders}
- In order to build the five encoders, we load the \texttt{torchvision.models} VGG-19 pretrained model and trim it in the following way:
+\subsubsection{Encoders}\label{subsec:Encoders}
+Any numeric $d$ entry indicates a 2D-convolution layer with $d$ output channels, and MP entries indicate MaxPool layers. In order to build the five encoders, we load the \texttt{torchvision.models} VGG-19 pretrained model and trim it in the following way:
 \begin{itemize}
 	\item Encoder-1: [64]
 	\item Encoder-2: [64, 64, MP, 128]
@@ -16,7 +16,7 @@ Any numeric $d$ entry indicates a 2D-convolution layer with $d$ output channels,
 \end{itemize}
 The encoders are initialized with pretrained weights and thus the project does not include encoder training. For next sections, denote Encoder-$j$ as $E_j$.
 
-\subsubsection{Decoders}
+\subsubsection{Decoders}\label{subsec:Decoders}
 The architecture of the decoders is generally inverse to that of the encoders, in order to achieve image-reconstruction. We defined five decoder \textit{blocks} the following way:
 \begin{itemize}
 	\item Decoder-Block-1: (64)[3]
@@ -37,7 +37,7 @@ Decoder training was done with two steps: Decoder-Block sequential training, fol
 	\hat{x} = B_1 \circ \dots \circ B_{j-1} \circ B_j \circ E_j (x)
 	\end{gather*}
 	In this calculation all functions except $B_j$ are fixed. Since $B_{j-1}, \dots, B_1$ are already pretrained to some degree when training $B_j$, then $B_j$ learns to transform $E_j$'s output to $D_{j-1}$ input. The sequential blocks training is implemented in the \texttt{train\_block} function in \texttt{seq\_models.py} file. Use '\texttt{python seq\_models.py -h}' for help.
-	
+
 	\item \textbf{Fine-Tune Phase}: Each decoder $D_j$ is built according to Equation~\ref*{eq:decoder} with the pretrained blocks acquired in the previous step. With none of the blocks frozen, the entire $D_j$ is now trained for image reconstruction against $E_j$ and ultimately is saved as a decoder (and not as a bundle of blocks). The fine-tune training is implemented in the \texttt{train\_decoder} function in \texttt{models\_utils.py} file. Use '\texttt{python models\_utils.py -h}' for help.
 \end{itemize}
 
