@@ -11,15 +11,36 @@ The basic building block of the UST is a pair of VGG based encoder and decoder, 
 	\label{fig:full-pipeline}
 \end{figure}
 
-\subsubsection{WCT} As explained above, given a pair of content image $I_C$ and style image $I_S$ as input for the $j$-th level, at first the encoder extracts their features by $f_c = E_j(I_C)$, $f_s = E_j(I_S)$. Notice that both these features are three dimensional, $f_c$ is $[c\times h \times w]$ and $f_s$ is $[c\times h' \times w']$. Their height and width are generally different but their number of channels, $c$, is the same.\\
-The WCT is a pair of projection functions working on vectorized VGG features. The term \textit{vectorized} means that we treat every channel of the feature tensor as a row vector, so $\vec{f_c}$ is $[c \times hw]$ and $\vec{f_s}$ is $[c \times h'w']$. WCT works on the features extracted by the encoder, and its result is fed to the decoder, as seen in Figure ~\ref{fig:full-pipeline}. WCT is a composition of a whitening transform ($P_C$) and a coloring transform ($P_S$). The key idea behind the WCT is to directly match feature correlations of the content image to those of the style image via those two projections. Specifically, the WCT transform is applied to the vectorized content feature $\vec{f_c}$ via:
+\subsubsection{WCT} As explained above, given a pair of content image $I_C$ and style image $I_S$ as input for the $j$-th level, at first the encoder extracts their features by $f_c = E_j(I_C)$, $f_s = E_j(I_S)$. Notice that these features are three dimensional, $f_c$ is $[c\times h \times w]$ and $f_s$ is $[c\times h' \times w']$. Their height and width are generally different but their number of channels, $c$, is the same.\\
+The WCT is a pair of projection functions working on vectorized VGG features. The term \textit{vectorized} means that we treat every channel of the feature tensor as a row vector, so $\vec{f_c}$ is $[c \times hw]$ and $\vec{f_s}$ is $[c \times h'w']$. WCT works on the features extracted by the encoder, and its result is fed to the decoder, as seen in Figure ~\ref{fig:full-pipeline}. WCT is a composition of a whitening transform ($\hat{f}_C$) and a coloring transform ($\hat{f}_{CS}$). The key idea behind the WCT is to directly match feature correlations of the content image to those of the style image via those two projections. Specifically, the WCT transform is applied to the vectorized content and style feature $\vec{f_c}$, $\vec{f_s}$ respectively via:\\
+%%%%%%%%%%%%%%%%%%whitening%%%%%%%%%%%%%%%%%%%%%%
+\textbf{Whitening:}\\
 \begin{equation}
-f_{cs} = P_S P_C \vec{f_c}
+Centered\_\vec{f_c} = \vec{f_c} - mean(\vec{f_c})
 \end{equation}
-Where $P_C=E_C\Lambda_C^{-\frac{1}{2}}$, and $P_S=E_S\Lambda_S^{\frac{1}{2}}$. Here $\Lambda_C$ and $\Lambda_S$ are the diagonal matrices with the eigenvalues of the covariance matrix $\vec{f_c} \vec{f_c}^T [c\times c]$ and $\vec{f_s} \vec{f_s}^T [c\times c]$ respectively. The matrices $E_C$ and $E_S$ are the corresponding orthonormal matrices of eigenvectors, respectively, (see figure ~\ref{fig:WCT-vis}). After the transformation, the correlations of transformed content features match those of the style, i.e., $\vec{f_{cs}} \vec{f_{cs}}^T = \vec{f_s} \vec{f_s}^T$.
+\begin{equation}
+\hat{f_c}\hat{f_c}^T=I \Rightarrow  \hat{f_c} = E_cD_c^{-\frac{1}{2}}E_c^TCentered\_\vec{f_c} 
+\end{equation}
+Where $D_c$ is a diagonal matrix with the eigenvalues of the covariance matrix $Centered\_\vec{f_c}Centered\_\vec{f_c}^T=E_cD_cE_c^T \in\mathbb{R}^{cxc}$, and $E_c$ is the corresponding orthogonal matrix of eigenvectors, (see figure ~\ref{fig:WCT-vis} (a)). Both matrices obtained by using Singular Value Decomposition (SVD).\\
+%%%%%%%%%%%%%%%%%%coloring%%%%%%%%%%%%%%%%%%%%%%
+\newline\textbf{Coloring:}\\
+Coloring transform is the inverse of the whitening transform, see figure ~\ref{fig:WCT-vis} (b)).
+\begin{equation}
+Centered\_\vec{f_s} = \vec{f_s} - mean(\vec{f_s})
+\end{equation}
+\begin{equation}
+\hat{f_{cs}}\hat{f_{cs}}^T=f_sf_s^T \Rightarrow  \hat{f_{cs}} = E_sD_s^{\frac{1}{2}}E_s^TCentered\_\vec{f_c} 
+\end{equation}
+Where $D_s$ is a diagonal matrix with the eigenvalues of the covariance matrix $Centered\_\vec{f_s}Centered\_\vec{f_s}^T \in\mathbb{R}^{cxc}$, and $E_s$ is the corresponding orthogonal matrix of eigenvectors, both matrices also obtaind by SVD.\\
+Now, we add the mean vector of the style:
+\begin{equation}
+\hat{f_{cs}} = \hat{f_{cs}}+mean(\vec{f_s})
+\end{equation}
+
+After the transformation, the correlations of transformed content features match those of the style, i.e., $\hat{f_{cs}} \hat{f_{cs}}^T = \vec{f_s} \vec{f_s}^T$.
 The WCT performs well for artistic image stylization. However it generates
 structural artifacts (e.g., distortions on object boundaries)
-WCT is implemented in the function \texttt{wct} in file \texttt{utils.py}, \textcolor{red}{and explained in greater detain in section 3.2 in \cite{bib11}}.
+WCT is implemented in the function \texttt{wct} in file \texttt{utils.py}.
 
 \begin{figure}[h!]
 	\centering
