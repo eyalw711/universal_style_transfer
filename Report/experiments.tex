@@ -4,8 +4,8 @@
 Our implementation of the Universal Style Transfer is adapted to use two different sets of encoder-decoder models: the models we trained according to section \ref{subsec:Models} (our), and the models offered to download by Li et al in their GitHub (reference). This means that we can test \textbf{our implementation} of the UST algorithm with both sets of models. In this section we want to evaluate our models in comparison to the references in terms of image reconstruction, in order to asses the quality of our models training.
 
 \subsubsection{Quantative Reconstruction Loss}
-As section \ref{subsec:Models} explains, the models are trained for image reconstruction. Passing an input image through the encoder-decoder models will output a reconstructed image, featuring some distortion. A better trained model will output images which feature smaller distortion. In order to quantify the reconstruction distortion induced by our trained models, in comparison to that of the reference models, we encode and then decode 1k content images from the COCO dataset with each of the 5 encoder-decoder pairs, and measure the pixel MSE and feature MSE. The pixel MSE measures the pixel mean square error between the reconstructed image, $\hat{x}$, and the original one, $x$, i.e. $MSE(x - \hat{x})$. The feature MSE measures the error between the deep features of the reconstructed image and the original one. It is measured by encoding $x$ and $\hat{x}$ and calculating $MSE(E(x)-E(\hat{x}))$. Table ~\ref{Tab:loss} displays the pixel loss (feature loss) per model, which is defined to be the average pixel MSE (feature MSE) over all 1k images.
-
+As section \ref{subsec:Models} explains, the models are trained for image reconstruction. Passing an input image through the encoder-decoder models will output a reconstructed image, featuring some distortion. A better trained model will output images which feature smaller distortion. In order to quantify the reconstruction distortion induced by our trained models, in comparison to that of the reference models, we encode and then decode 1k content images from the COCO dataset with each of the 5 encoder-decoder pairs, and measure the pixel MSE and feature MSE (as depicted in equation \ref{eq:loss} and elaborated in \cite{bib22, bib17}). The pixel MSE measures the pixel mean square error between the reconstructed image, $\hat{x}$, and the original one, $x$, i.e. $MSE(x - \hat{x})$. The feature MSE measures the error between the deep features of the reconstructed image and the original one. It is measured by encoding $x$ and $\hat{x}$ and calculating $MSE(E(x)-E(\hat{x}))$. Table ~\ref{Tab:loss} displays the pixel loss (feature loss) per model, which is defined to be the average pixel MSE (feature MSE) over all 1k images.
+ 
 % ecoder-decoder table %
 
 \begin{center}
@@ -17,20 +17,20 @@ As section \ref{subsec:Models} explains, the models are trained for image recons
 		\hline
 		architecture &Reference &Our &Reference &Our \tabularnewline
 		\hline
-		1 &$8.246$  &$802$   &$2.161$ &$0.7$\tabularnewline
+		1 &$8.16$  &$784.42$   &$2.09$ &$0.71$\tabularnewline
 		\hline
-		2 &$2.374$  &$810$   &$1.257$ &$15.30$\tabularnewline
+		2 &$2.27$  &$791.08$   &$1.24$ &$15.22$\tabularnewline
 		\hline
-		3 &$7.994$  &$884$   &$16.38$ &$86.60$\tabularnewline
+		3 &$7.71$  &$866.33$   &$15.87$ &$85.44$\tabularnewline
 		\hline
-		4 &$0.281$  &$830$   &$25.09$ &$223.6$\tabularnewline
+		4 &$27.76$  &$812.24$   &$24.48$ &$219.65$\tabularnewline
 		\hline
-		5 &$107.4$  &$818.6$   &$108.0$ &40.52\tabularnewline
+		5 &$105.69$  &$798.14$   &$104.95$ & $39.67$\tabularnewline
 		\hline
 	\end{tabular}\\
 \end{center}
 
-\textcolor{red}{TODO: complete when 5th row is complete...} From table ~\ref{Tab:loss} it is visible that in terms of pixel loss, the reconstruction done by the reference models is at least two orders of magnitude better than of our models. It is also visible that the  pixel loss generally increases as the architecture gets deeper. In addition, we measure quantitatively (see table ~\ref{Tab:loss}) our reconstruction distortion loss by two measures: pixel loss and feature loss as depicted in equation \ref{eq:loss} and elaborated in \cite{bib22, bib17}.\newline\\
+From table ~\ref{Tab:loss} it is visible that in terms of pixel loss, the reconstruction done by the reference models is at least an order of magnitude better than of our models, sometimes two. It is also visible that the reference pixel loss generally increases as the architecture gets deeper, while ours is relatively constant. In the reference models, the pixel loss and feature loss show similar traits, which reassures $\lambda=1$ while training. In our models, on the other hand, the pixel loss and feature loss seem independent which may indicate the models have yet to fully converge. The impression from this data is that the models we trained perform worse than their reference counterparts.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% reconstruction comparison %%%
@@ -166,8 +166,6 @@ To demonstrate the image reconstruction performance of our trained models, we ch
 	\label{fig:reconstruction}
 \end{figure}
 
-\textcolor{red}{TODO: address the results from the numeric table} Our distortion-of-reconstruction loss table ~\ref{Tab:loss} shows by both pixel and feature loss, that the first architecture has the less loss since it is only uses 1 convolution layer. As we go deeper in architectures in a manner of convolutional layers, we see that the loss arises respectively.\\
-
 From Figure ~\ref{fig:reconstruction} it can be seen that our architectures \#1-4 conserve the original image's color to some degree. Architecture \#5, unlike them, only preserves a fraction of the color tones originally available in the input - mostly some of the reds. Additionally, the deeper the architecture is, the more details are lost in the reconstruction process. Another problem is image regions going gray, and losing their contrast, such as the shade of the car in the fourth row or the blue walls in the fifth. Keeping in mind the trade-off between pipeline depth and image distortion, in order to get the best results possible from the models trained by us, we choose to shorten our pipeline such that it would consist of the four last pipeline levels from ~\ref{fig:style_transfer}. In this way we expect our pipeline to produce good reconstruction quality as well as use deep enough features while transferring style. This means we leave architecture \#5 unused when transferring style using our trained models.\\
 These visual results show that our models are not sufficiently trained. The main difficulty in training these models was a lack of compute power. The models, based on VGG-19 are relatively large and converge very slowly towards optimality. We strongly believe that given more powerful resources we could have trained better performing decoders.\\
 \textcolor{red}{Consider making an experiment showing reconstruction through the pipeline 4321, next to style transfer or just next to the reference (justification for choosing 4321 as our pipeline)}
@@ -179,7 +177,7 @@ These visual results show that our models are not sufficiently trained. The main
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Style Transfer Experimental Results}
-This section display the results of our implementation of UST\cite{bib11}. Unlike the previous section where the images only when through reconstruction, this time we run the entire algorithm implementation on them, including the WCT at the bottleneck of the model-decoder pipeline levels. Due to reasons explained above, when using our trained models the pipeline consists of architectures \#1-4, while it consists of architectures \#1-5 when our implementation uses the reference models. In figure ~\ref{fig:style_transfer} we show several examples of style transferral using our implementation with both sets of models. Column (a) shows the input content images, column (b) shows the input style images, column (c) shows the results computed using the reference models and (d) using ours.\\
+This section displays the results of our implementation of UST\cite{bib11}. Unlike the previous section where the images only went through reconstruction, this time we run the entire algorithm implementation, including the WCT at the bottleneck of the model-decoder pipeline levels. Due to reasons explained above, when using our trained models the pipeline consists of architectures \#1-4, while it consists of architectures \#1-5 when our implementation uses the reference models. In figure ~\ref{fig:style_transfer} we show several examples of style transferral using our implementation with both sets of models. Column (a) shows the input content images, column (b) shows the input style images, column (c) shows the results computed using the reference models and (d) using ours.\\
 
 \begin{figure}[H]
 	% first line
@@ -256,7 +254,7 @@ This section display the results of our implementation of UST\cite{bib11}. Unlik
 		\includegraphics[width=\linewidth]{transfer_examples/transfer_room_paint_08_our.jpg} % ours reconstruction num.5
 		\caption{Our Models}
 	\end{subfigure}
-	\caption{Results from different style transfer methods using style weight $\alpha=0.5$}
+	\caption{Results of our UST implementation, using two sets of models, with $\alpha=0.5$}
 	\label{fig:style_transfer}
 \end{figure}
 
@@ -267,7 +265,9 @@ It is seen in the results displayed in Figure ~\ref{fig:style_transfer} (c)+(d) 
 % Boost %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Stylization boosting}
+\subsubsection{Stylization Boosting}
+This section presents the results of the innovative \textit{boost} step we introduced to the UST algorithm. Figures ~\ref{fig:Boost1} and ~\ref{fig:Boost2} show examples of boosting the UST. It is noticeable that boosted regions contain more finely detailed style and color than their non-boosted counterparts. The details in the boosted regions are more intense and colorful, and the boosting step achieves this without harming the original content of these regions. As the results show, our boosting step could be adapted to the UST algorithm to achieve visually better results. In order to show the true potential of the boost step, these results were produced with our implementation of the UST using the reference models.
+
 \begin{figure}[H]
 	% first line
 	\centering
@@ -313,8 +313,11 @@ It is seen in the results displayed in Figure ~\ref{fig:style_transfer} (c)+(d) 
 	\caption{Second Boosting results comparing to original UST \cite{bib11}. Top left is the content image, top right is the style image, bottom left is the regular UST, bottom right is the UST+boost}
 	\label{fig:Boost2}
 \end{figure}
+
 %%%%%%%%%%%%%%%%%%%%%%%% Merge  %%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Two styles merging methods}
+This section presents the results of our innovative \textit{Merging} techniques we introduced to the UST algorithm. Figure~\ref{fig:Merge} shows examples of merging two styles to one content using these three techniques in comparison to the original technique offered in \cite{bib11}. First thing noticeable is that all techniques perform Merge-UST with visually pleasing results. The Interpolate-Style Merge shown in column (e) features surprisingly similar results to Original-Merge, even though it uses one WCT call instead of two, making it computationally more efficient. As the results show, our innovative merging techniques could be adapted to the UST algorithm to achieve the same visually pleasing results with decreased computational complexity. In order to show the true potential the merging techniques, these results were produced with our implementation of the UST using the reference models.
+
 \begin{figure}[H]
 	% first line
 	\centering
@@ -396,9 +399,10 @@ It is seen in the results displayed in Figure ~\ref{fig:style_transfer} (c)+(d) 
 		\label{fig:Merge}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-add more text here\newline
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\textbf{Style-Merging Methods Efficiency}
+
+
+\textbf{Style-Merging Methods Efficiency}:\\
+To quantify the runtime efficiency of the our new merging techniques in comparison to Original-Merge, we measured the runtime of our Merge-UST in all different techniques, and display the results in Table~\ref{Tab:merge}. The algorithm ran on $1024\times 1024$ RGB images. We averaged the results of 10 experiments per technique. The time was measured by the \texttt{time} bash command, and the displayed results are of the "User" runtime.
 %Efficiency table%
 \begin{center}
 	\captionof{table}{UST merge runtime of different techniques\label{Tab:merge}}
@@ -411,12 +415,12 @@ add more text here\newline
 	\end{tabular}
 \end{center}
 
+Table~\ref{Tab:merge} shows what was predicted in section~\ref{merge_methods_lbl}, i.e. all three techniques work faster than the Original-Merge, where Level-Merge is the fastest, working at regular UST speed, Interpolate-Style-Merge and Channel-Merge are roughly the same, and both save approximately $500ms$ comparing to Original-Merge. In this aspect the new techniques are superior.
+
 %%%%%%%%%%%%%%%%%%%%%%%% Texture synthesis  %%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Texture synthesis}
-We demonstrate the effectiveness of our method for universal style transfer by showing its application to universal texture synthesis. In figure ~\ref{fig:texture} we visualize the whitened features and
-synthesized textures via simple feature coloring.
-One option to produce texture image is simply setting the content image as a random noise image (e.g., Gaussian noise). Another option to get synthesized texture in our stylization framework is to directly initialize the content features to be white noise as proposed by Li et al. \cite{bib11}. Both approaches achieve similar results.
-The evaluation criterion for the quality of the synthesized texture is usually human inspection and textures are successfully synthesized if a human observer cannot tell the original texture from a synthesized one.
+Another application for UST is Universal Texture Synthesis. As described in section~\ref{subsec:texture}, running the UST algorithm with random noise content input can serve as a texture generator, transferring the artistic style onto the noise. In Figure~\ref{fig:texture} we show examples of how our implementation of the UST can generate textures. The content inputs are uniform random noise. By the criterion set in section~\ref{subsec:texture}, it is noticeable that the generated textures differ from the originals, but we still consider them as visually pleasing.
+
 \begin{figure}[H]
 	% first line
 	\centering
@@ -436,6 +440,6 @@ The evaluation criterion for the quality of the synthesized texture is usually h
 		\includegraphics[width=\linewidth]{texture_synth/cubism2_tex.jpg} % stylization img num.2
 		\caption{Our UST}
 	\end{subfigure}
-	\caption{Synthesized results.}
+	\caption{UST Synthesized results.}
 	\label{fig:texture}
 \end{figure}
