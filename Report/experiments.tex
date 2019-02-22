@@ -168,7 +168,6 @@ To demonstrate the image reconstruction performance of our trained models, we ch
 
 From Figure ~\ref{fig:reconstruction} it can be seen that our architectures \#1-4 conserve the original image's color to some degree. Architecture \#5, unlike them, only preserves a fraction of the color tones originally available in the input - mostly some of the reds. Additionally, the deeper the architecture is, the more details are lost in the reconstruction process. Another problem is image regions going gray, and losing their contrast, such as the shade of the car in the fourth row or the blue walls in the fifth. Keeping in mind the trade-off between pipeline depth and image distortion, in order to get the best results possible from the models trained by us, we choose to shorten our pipeline such that it would consist of the four last pipeline levels from ~\ref{fig:style_transfer}. In this way we expect our pipeline to produce good reconstruction quality as well as use deep enough features while transferring style. This means we leave architecture \#5 unused when transferring style using our trained models.\\
 These visual results show that our models are not sufficiently trained. The main difficulty in training these models was a lack of compute power. The models, based on VGG-19 are relatively large and converge very slowly towards optimality. We strongly believe that given more powerful resources we could have trained better performing decoders.\\
-\textcolor{red}{Consider making an experiment showing reconstruction through the pipeline 4321, next to style transfer or just next to the reference (justification for choosing 4321 as our pipeline)}
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -209,19 +208,19 @@ This section displays the results of our implementation of UST\cite{bib11}. Unli
 		\includegraphics[width=\linewidth]{transfer_examples/transfer_giraffe_st1_08_our.jpg} % ours reconstruction num.2
 	\end{subfigure}
 	% third line
-	\centering
-	\begin{subfigure}[b]{0.225\linewidth}
-		\includegraphics[width=\linewidth]{in1_sq.jpg} % content img num.3
-	\end{subfigure}
-	\begin{subfigure}[b]{0.225\linewidth}
-		\includegraphics[width=\linewidth]{tiger_sq.jpg} % style img num.3
-	\end{subfigure}
-	\begin{subfigure}[b]{0.225\linewidth}
-		\includegraphics[width=\linewidth]{transfer_examples/transfer_in1_tiger_08_ref.jpg} % theirs reconstruction num.3
-	\end{subfigure}
-	\begin{subfigure}[b]{0.225\linewidth}
-		\includegraphics[width=\linewidth]{transfer_examples/transfer_in1_tiger_08_our.jpg} % ours reconstruction num.3
-	\end{subfigure}
+%	\centering
+%	\begin{subfigure}[b]{0.225\linewidth}
+%		\includegraphics[width=\linewidth]{in1_sq.jpg} % content img num.3
+%	\end{subfigure}
+%	\begin{subfigure}[b]{0.225\linewidth}
+%		\includegraphics[width=\linewidth]{tiger_sq.jpg} % style img num.3
+%	\end{subfigure}
+%	\begin{subfigure}[b]{0.225\linewidth}
+%		\includegraphics[width=\linewidth]{transfer_examples/transfer_in1_tiger_08_ref.jpg} % theirs reconstruction num.3
+%	\end{subfigure}
+%	\begin{subfigure}[b]{0.225\linewidth}
+%		\includegraphics[width=\linewidth]{transfer_examples/transfer_in1_tiger_08_our.jpg} % ours reconstruction num.3
+%	\end{subfigure}
 	% fourth line
 	\centering
 	\begin{subfigure}[b]{0.225\linewidth}
