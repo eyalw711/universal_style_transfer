@@ -34,7 +34,7 @@ Coloring transform is the inverse of the whitening transform, see figure ~\ref{f
 Centered\_\vec{f_s} = \vec{f_s} - mean(\vec{f_s})
 \end{equation}
 \begin{equation}
-\hat{f_{cs}}\hat{f_{cs}}^T=f_sf_s^T \Rightarrow  \hat{f_{cs}} = E_sD_s^{\frac{1}{2}}E_s^TCentered\_\vec{f_c} 
+\hat{f_{cs}}\hat{f_{cs}}^T=f_sf_s^T \Rightarrow  \hat{f_{cs}} = E_sD_s^{\frac{1}{2}}E_s^T\hat{f_c} 
 \end{equation}
 Where $D_s$ is a diagonal matrix with the eigenvalues of the covariance matrix:  \begin{equation*}
 Centered\_\vec{f_s}\cdot Centered\_\vec{f_s}^T \in\mathbb{R}^{cxc}
