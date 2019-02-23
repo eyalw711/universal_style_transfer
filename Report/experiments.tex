@@ -1,7 +1,7 @@
 %%%%%  Decoder %%%%%
 \subsection{Reconstruction Quality Evaluation}
 
-Our implementation of the Universal Style Transfer is adapted to use two different sets of encoder-decoder models: the models we trained according to section \ref{subsec:Models} (our), and the models offered to download by Li et al in their GitHub (reference). This means that we can test \textbf{our implementation} of the UST algorithm with both sets of models. In this section we want to evaluate our models in comparison to the references in terms of image reconstruction, in order to asses the quality of our models training.
+Our implementation of the Universal Style Transfer is adapted to use two different sets of encoder-decoder models: the models we trained according to section \ref{subsec:Models} (our), and the models offered to download by Li et al. in their GitHub (reference). This means that we can test \textbf{our implementation} of the UST algorithm with both sets of models. In this section we want to evaluate our models in comparison to the references in terms of image reconstruction, in order to asses the quality of our models training.
 
 \subsubsection{Quantative Reconstruction Loss}
 As section \ref{subsec:Models} explains, the models are trained for image reconstruction. Passing an input image through the encoder-decoder models will output a reconstructed image, featuring some distortion. A better trained model will output images which feature smaller distortion. In order to quantify the reconstruction distortion induced by our trained models, in comparison to that of the reference models, we encode and then decode 1k content images from the COCO dataset with each of the 5 encoder-decoder pairs, and measure the pixel MSE and feature MSE (as depicted in equation \ref{eq:loss} and elaborated in \cite{bib22, bib17}). The pixel MSE measures the pixel mean square error between the reconstructed image, $\hat{x}$, and the original one, $x$, i.e. $MSE(x - \hat{x})$. The feature MSE measures the error between the deep features of the reconstructed image and the original one. It is measured by encoding $x$ and $\hat{x}$ and calculating $MSE(E(x)-E(\hat{x}))$. Table ~\ref{Tab:loss} displays the pixel loss (feature loss) per model, which is defined to be the average pixel MSE (feature MSE) over all 1k images.
@@ -167,7 +167,7 @@ To demonstrate the image reconstruction performance of our trained models, we ch
 \end{figure}
 
 From Figure ~\ref{fig:reconstruction} it can be seen that our architectures \#1-4 conserve the original image's color to some degree. Architecture \#5, unlike them, only preserves a fraction of the color tones originally available in the input - mostly some of the reds. Additionally, the deeper the architecture is, the more details are lost in the reconstruction process. Another problem is image regions going gray, and losing their contrast, such as the shade of the car in the fourth row or the blue walls in the fifth. Keeping in mind the trade-off between pipeline depth and image distortion, in order to get the best results possible from the models trained by us, we choose to shorten our pipeline such that it would consist of the four last pipeline levels from ~\ref{fig:style_transfer}. In this way we expect our pipeline to produce good reconstruction quality as well as use deep enough features while transferring style. This means we leave architecture \#5 unused when transferring style using our trained models.\\
-These visual results show that our models are not sufficiently trained. The main difficulty in training these models was a lack of compute power. The models, based on VGG-19 are relatively large and converge very slowly towards optimality. We strongly believe that given more powerful resources we could have trained better performing decoders.\\
+These visual results show that our models are not sufficiently trained. The main difficulty in training these models was a lack of compute power. The models, based on VGG-19 are relatively large and converge very slowly towards optimality. The training process of our models used a Tesla K80 GPU offered on Google Colab, and took three weeks in which each model was trained numerous epochs on the COCO test and validation subsets. In hindsight this wasn't enough for VGG-19 based models to achieve proper results. We strongly believe that given more time and powerful resources we could have trained better performing decoders.\\
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -287,7 +287,7 @@ This section presents the results of the innovative \textit{boost} step we intro
 		\includegraphics[width=\linewidth]{boost/boost_in2_st2_05.jpg} % UST+boost num.1
 		%\caption{Boost UST}
 	\end{subfigure}
-	\caption{First Boosting results comparing to original UST \cite{bib11}. Top left is the content image, top right is the style image, bottom left is the regular UST, bottom right is the UST+boost}
+	\caption{First Boosted UST results compared to UST. Top left is the content image, top right is the style image, bottom left is the regular UST, bottom right is the UST+boost}
 	\label{fig:Boost1}
 \end{figure}
 \begin{figure}[H]
@@ -309,7 +309,7 @@ This section presents the results of the innovative \textit{boost} step we intro
 		\includegraphics[width=\linewidth]{boost/boost_room_giraffe_05.jpg} % UST+boost num.1
 		%\caption{Boost UST}
 	\end{subfigure}
-	\caption{Second Boosting results comparing to original UST \cite{bib11}. Top left is the content image, top right is the style image, bottom left is the regular UST, bottom right is the UST+boost}
+	\caption{Second Boosted UST results compared to UST. Top left is the content image, top right is the style image, bottom left is the regular UST, bottom right is the UST+boost}
 	\label{fig:Boost2}
 \end{figure}
 
