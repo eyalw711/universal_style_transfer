@@ -6,7 +6,7 @@ We based our solution on the implementation of VGG-19 \cite{bib20} from \texttt{
 Any numeric $d$ entry indicates a 2D-convolution layer with $d$ output channels, and MP entries indicate MaxPool layers.
 
 \subsubsection{Encoders}\label{subsec:Encoders}
-Any numeric $d$ entry indicates a 2D-convolution layer with $d$ output channels, and MP entries indicate MaxPool layers. In order to build the five encoders, we load the \texttt{torchvision.models} VGG-19 pretrained model and trim it in the following way:
+In order to build the five encoders, we load the \texttt{torchvision.models} VGG-19 pretrained model and trim it in the following way:
 \begin{itemize}
 	\item Encoder-1: [64]
 	\item Encoder-2: [64, 64, MP, 128]
@@ -29,6 +29,7 @@ The number in parenthesis in each row stands for the number of input channels fo
 \begin{equation}\label{eq:decoder}
 D_j(x) = B_1 \circ \dots \circ B_j (x)
 \end{equation}
+Notice that $D_j(E_j(x))$ yields $\hat{x}$ with the same size as $x$.\\
 
 Decoder training was done with two steps: Decoder-Block sequential training, followed by Fine-Tune phase.
 \begin{itemize}
@@ -37,8 +38,7 @@ Decoder training was done with two steps: Decoder-Block sequential training, fol
 	\hat{x} = D_{j-1} \circ B_j \circ E_j (x)
 	\end{gather*}
 	In this calculation all functions except $B_j$ are fixed. Since $B_{j-1}, \dots, B_1$ are already pretrained to some degree when training $B_j$, then $B_j$ learns to transform $E_j$'s output to $D_{j-1}$ input. The sequential blocks training is implemented in the \texttt{train\_block} function in \texttt{seq\_models.py} file. Use '\texttt{python seq\_models.py -h}' for help.\\
-	This step is important since the deeper the architecture of the decoder goes, the larger the models are, and the slower the weights converge in training. Having to train only a part of the model at first (where the rest is already trained) assures it converges faster to a reasonable degree. Also, whenever all 5 blocks are trained, they serve as a good starting point for the next stage.
-	
+	This step is important since the deeper the architecture of the decoder goes, the larger the models are, and the slower the weights converge in training. Having to train only a part of the model at first (where the rest is already trained) removes degrees of freedom, and assures it converges faster to a reasonable degree. Also, whenever all 5 blocks are trained, they serve as a good starting point for the next stage.
 
 	\item \textbf{Fine-Tune Phase}: Each decoder $D_j$ is built according to Equation~\ref*{eq:decoder} with the pretrained blocks acquired in the previous step. With none of the blocks frozen, the entire $D_j$ is now trained for image reconstruction against $E_j$ and ultimately is saved as a decoder (and not as a bundle of blocks). The fine-tune training is implemented in the \texttt{train\_decoder} function in \texttt{models\_utils.py} file. Use '\texttt{python models\_utils.py -h}' for help.
 \end{itemize}
@@ -47,10 +47,8 @@ Throughout this section, the loss function for training the models is:
 \begin{equation}\label{eq:loss}
 L = MSE(I_o-I_i) + \lambda \cdot MSE(\Phi(I_o)-\Phi(I_i))
 \end{equation}
-It is derived from Equation 1 at \cite{bib11}, with the difference that we use $MSE$ where Li et al use $L2 -loss$. We chose to use $MSE$ since different encoders $\Phi$ extract different dimensions features, causing the $L2$ loss to be somewhat not as normalized as the $MSE$. For example, an input image $I_i$ of dimensions [3,1024,1024] would have features $f_4=E_4(I_i)$ of dimension [512, 128, 128], 8,388,608 total entries, whereas it would have $f_5=E_5(I_i)$ of dimension [512, 64, 64], 2,097,152 total entries. In this example, the dimension difference causes the feature loss to be much more important in $D_4$ training than in $D_5$ under $L2$, while we believe it shouldn't.
+$\lambda$ was set to $1.0$ during training as advised by Li et al in their paper \cite{bib11}. This loss function is derived from Equation 1 at \cite{bib11}, with the difference that we use $MSE$ where Li et al use $L2 -loss$. We chose to use $MSE$ since different encoders $\Phi$ extract different dimensions features, causing the $L2$ loss to be somewhat not as normalized as the $MSE$. For example, an input image $I_i$ of dimensions [3,1024,1024] would have features $f_4=E_4(I_i)$ of dimension [512, 128, 128], 8,388,608 total entries, whereas it would have $f_5=E_5(I_i)$ of dimension [512, 64, 64], 2,097,152 total entries. In this example, the dimension difference causes the feature loss to be much more important in $D_4$ training than in $D_5$ under $L2$, while we believe it shouldn't.\\
 
-$\lambda$ was set to $1.0$ during training as advised by Li et al in their paper \cite{bib11}.
-
-When training $D_4, D_5$ we encountered a problem where every region with a "texture" such as tree leaves or sand in the original image would be translated into "boxy" artifacts in the reconstructed image. This is often an issue encountered in deep CNNs and to solve it we set the UpSampling in blocks 4,5 to "bilinear" whereas originally we tried training all blocks with "nearest" UpSampling. Another issue we had was when training $D_1$, which performs one convolution only. Its outputs showed clear border artifacts. To mitigate them we set the padding method of $B_1$ from zero-padding to replicate padding in $D_1$ only.\\
+When training $D_4, D_5$ we encountered a problem where every region with a "texture" such as tree leaves or sand in the original image would be translated into "boxy" artifacts in the reconstructed image. This is often an issue encountered in deep CNNs and to solve it we set the UpSampling in blocks 4,5 to "bilinear" whereas originally we tried training all blocks with "nearest" UpSampling. Another issue we had was when training $D_1$, which performs one convolution only. Its outputs showed clear border artifacts. To mitigate them we set the padding method of $B_1$ from zero-padding to replicate-padding in $D_1$ only.\\
 
 The dataset on which the models were trained is the COCO Dataset, a large-scale object detection, segmentation, and captioning dataset. The dataset, on top of the images it contains, offer numerous annotations such as image segmentation and classification data. We trained the models on the "train" and "validation" sets only. These sets combined contain 25k images. The annotations were unused in the training process since the decoder only trains for image reconstruction.

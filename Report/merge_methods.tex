@@ -25,5 +25,5 @@ In this section we researched other merging techniques to merge two style with a
 	\end{enumerate}
 	In this method too, in each pipeline level, still a single WCT call is conducted, and three feature extractions are made, making it slightly more computationally heavy than the Level Merge method. The same limitation from Channel Merge applies to this technique as well, is the necessary for the pair of style to have same dimensions, which is done, again, by resizing the style inputs. Unlike the other techniques proposed above, this technique can harness the functionality of the $\beta$ parameter to give weights to the styles while merging.
 \end{itemize}
-These three methods are implemented in the function \texttt{merge\_function} in file \texttt{utils.py}.
+These three methods are implemented in the function \texttt{merge\_function} in file \texttt{utils.py}. Different merging methods are available at the \texttt{universal\_style\_transfer.py} by setting argument \texttt{--merge-method} to either 1,2,3,4. 
 %show an improved algorithm which merges two style images bu using WCT algorithm which based on singular value decomposition (SVD). Here, we both implement the original merge algorithm as proposed in \cite{bib11} as well as introduce three additional efficient methods based on the use WCT.

@@ -14,7 +14,7 @@ The \textit{Boost} step is a procedure done after the WCT had output $f_{cs}$ an
 	\end{equation}
 	$k$ is a kernel the size of the regions $r_i$ that diminishes close to its exterior. Its purpose is to blend $r_i$ into $f_{cs}[R_i]$ with no visible border artifacts. For $k$ we used a 2D raised-cosine which answers this requirement. See implementation in \texttt{raised\_cosine\_kern} function in \texttt{utils.py} file. The last two sub-steps are depicted in part (e) of Figure ~\ref{fig:boost}.
 \end{enumerate}
-The boost step is implemented in \texttt{boost} function in \texttt{utils.py}.\\
+The boost step is implemented in \texttt{boost} function in \texttt{utils.py}. It can be used by adding the argument \texttt{--boost} when running \texttt{universal\_style\_transfer.py}\\
 
 \begin{figure}[h!]
 	\centering
