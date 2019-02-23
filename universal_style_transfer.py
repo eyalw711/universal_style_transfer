@@ -132,7 +132,7 @@ def main():
   parser.add_argument('--beta', type=float, default=0.5, choices=[Range(0.0, 1.0)], help='weighing the style images in the style-img-pair parameter')
   
   parser.add_argument('--ref-models', default=False, action='store_true', help='use reference models')
-  parser.add_argument('--arch', help='custom architecture')
+  parser.add_argument('--arch', help='custom architecture, default is "54321", enter any digit sequence of 1-5 to construct a custom pipeline architecture.')
   args = parser.parse_args()
   
   ########################
